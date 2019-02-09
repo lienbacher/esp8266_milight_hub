@@ -22,6 +22,7 @@
 #include <MiLightClient.h>
 #include <BulbStateUpdater.h>
 #include <LEDStatus.h>
+#include <BME280.h>
 
 WiFiManager wifiManager;
 
@@ -43,6 +44,9 @@ BulbStateUpdater* bulbStateUpdater = NULL;
 int numUdpServers = 0;
 MiLightUdpServer** udpServers = NULL;
 WiFiUDP udpSeder;
+
+// BME-280 Sensor
+BME280 *bme = NULL; // I2C 
 
 /**
  * Set up UDP servers (both v5 and v6).  Clean up old ones if necessary.
@@ -204,6 +208,9 @@ void applySettings() {
   if (stateStore) {
     delete stateStore;
   }
+  if (bme) {
+    delete bme;
+  }
 
   radioFactory = MiLightRadioFactory::fromSettings(settings);
 
@@ -212,6 +219,8 @@ void applySettings() {
   }
 
   stateStore = new GroupStateStore(MILIGHT_MAX_STATE_ITEMS, settings.stateFlushInterval);
+
+  bme = new BME280(settings);
 
   milightClient = new MiLightClient(
     radioFactory,
@@ -280,7 +289,7 @@ void setup() {
   ledStatus->continuous(settings.ledModeWifiConfig);
 
   // start up the wifi manager
-  if (! MDNS.begin("milight-hub")) {
+  if (! MDNS.begin("milight-hub2")) {
     Serial.println(F("Error setting up MDNS responder"));
   }
   // tell Wifi manager to call us during the setup.  Note that this "setSetupLoopCallback" is an addition
@@ -325,6 +334,8 @@ void setup() {
   Serial.printf_P(PSTR("Setup complete (version %s)\n"), QUOTE(MILIGHT_HUB_VERSION));
 }
 
+unsigned long lastBME = 0;
+
 void loop() {
   httpServer->handleClient();
 
@@ -353,6 +364,25 @@ void loop() {
   if (shouldRestart()) {
     Serial.println(F("Auto-restart triggered. Restarting..."));
     ESP.restart();
+  }
+
+  // bme280
+  unsigned long timeSince = millis() - lastBME;
+  
+  if(settings.hasBME280 && timeSince > 2000) {
+    Serial.print("Temperature = ");  
+    Serial.print(bme->readTemperature());  
+    Serial.println(" *C");  
+    
+    Serial.print("Pressure = ");  
+    Serial.print(bme->readPressure());  
+    Serial.println(" hPa");  
+    
+    Serial.print("Humidity = ");  
+    Serial.print(bme->readHumidity());  
+    Serial.println(" %");  
+
+    lastBME = millis();
   }
 }
 

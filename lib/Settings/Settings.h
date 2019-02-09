@@ -101,7 +101,10 @@ public:
     ledModePacket(LEDStatus::LEDMode::Flicker),
     ledModePacketCount(3),
     hostname("milight-hub"),
-    rf24PowerLevel(RF24PowerLevelHelpers::defaultValue())
+    rf24PowerLevel(RF24PowerLevelHelpers::defaultValue()),
+	  hasBME280(false),
+    sdaPin(4),
+    sclPin(5)
   {
     if (groupStateFields == NULL) {
       numGroupStateFields = size(DEFAULT_GROUP_STATE_FIELDS);
@@ -174,6 +177,10 @@ public:
   size_t ledModePacketCount;
   String hostname;
   RF24PowerLevel rf24PowerLevel;
+  bool hasBME280;
+  uint8_t sdaPin;
+  uint8_t sclPin;
+  String mqttTopicBME;
 
 
 protected:

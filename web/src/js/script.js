@@ -251,6 +251,24 @@ var UI_FIELDS = [ {
     help: "Number of times the LED will flash when packets are changing",
     type: "string",
     tab: "tab-led"    
+  }, {
+    tag:   "has_bme280", 
+    friendly: "Enable BME280 environment sensor",
+    help: "Enable if there is a bme280 environmental sensor attached and set up sda and scl pins below",
+    type: "has_bme280",
+    tab: "tab-setup"
+  }, {
+    tag: "sda_pin",
+    friendly: "SDA pin",
+    help: "Pin on ESP8266 representing SDA for I2C interface",
+    type: "string",
+    tab: "tab-setup"
+  }, {
+    tag: "scl_pin",
+    friendly: "SCL pin",
+    help: "Pin on ESP8266 representing SCL for I2C interface",
+    type: "string",
+    tab: "tab-setup"
   }
 ];
 
@@ -939,6 +957,15 @@ $(function() {
           elmt += '</select>';
         } else if (k.type == 'option_buttons') {
           elmt += generateDropdownField(k.tag, k.options);
+        } else if (k.type == 'has_bme280') {
+          elmt += '<div class="btn-group" id="has_bme280" data-toggle="buttons">' +
+            '<label class="btn btn-secondary active">' +
+              '<input type="radio" id="enable_bme280" name="has_bme280" autocomplete="off" value="true" /> Enable' +
+            '</label>'+
+            '<label class="btn btn-secondary">' +
+              '<input type="radio" id="disable_bme280" name="has_bme280" autocomplete="off" value="false" /> Disable' +
+            '</label>' +
+          '</div>';
         } else {
           elmt += '<input type="text" class="form-control" name="' + k.tag + '"/>';
         }

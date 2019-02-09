@@ -109,7 +109,11 @@ void Settings::patch(JsonObject& parsedSettings) {
     this->setIfPresent(parsedSettings, "enable_automatic_mode_switching", enableAutomaticModeSwitching);
     this->setIfPresent(parsedSettings, "led_mode_packet_count", ledModePacketCount);
     this->setIfPresent(parsedSettings, "hostname", hostname);
-
+	  this->setIfPresent(parsedSettings, "has_bme280", hasBME280);
+    this->setIfPresent(parsedSettings, "sda_pin", sdaPin);
+    this->setIfPresent(parsedSettings, "scl_pin", sclPin);
+    this->setIfPresent(parsedSettings, "mqtt_topic_bme", mqttTopicBME);
+	
     if (parsedSettings.containsKey("rf24_power_level")) {
       this->rf24PowerLevel = RF24PowerLevelHelpers::valueFromName(parsedSettings["rf24_power_level"]);
     }
@@ -216,6 +220,10 @@ void Settings::serialize(Stream& stream, const bool prettyPrint) {
   root["led_mode_packet_count"] = this->ledModePacketCount;
   root["hostname"] = this->hostname;
   root["rf24_power_level"] = RF24PowerLevelHelpers::nameFromValue(this->rf24PowerLevel);
+  root["has_bme280"] = this->hasBME280;
+  root["sda_pin"] = this->sdaPin;
+  root["scl_pin"] = this->sclPin;
+  root["mqtt_topic_bme"] = this->mqttTopicBME;
 
   if (this->deviceIds) {
     JsonArray& arr = jsonBuffer.createArray();
