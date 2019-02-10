@@ -372,7 +372,7 @@ void loop() {
   // bme280
   unsigned long timeSince = millis() - lastBME;
   
-  if(settings.hasBME280 && timeSince > 10000) {
+  if(settings.hasBME280 && timeSince > 60000) {
     Serial.print("Temperature = ");  
     Serial.print(bme->readTemperature());  
     Serial.println(" *C");  
