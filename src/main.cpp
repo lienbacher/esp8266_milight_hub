@@ -220,7 +220,10 @@ void applySettings() {
 
   stateStore = new GroupStateStore(MILIGHT_MAX_STATE_ITEMS, settings.stateFlushInterval);
 
-  bme = new BME280(settings);
+  if(settings.hasBME280) {
+    bme = new BME280(settings);
+  }
+  
 
   milightClient = new MiLightClient(
     radioFactory,
@@ -289,7 +292,7 @@ void setup() {
   ledStatus->continuous(settings.ledModeWifiConfig);
 
   // start up the wifi manager
-  if (! MDNS.begin("milight-hub2")) {
+  if (! MDNS.begin(settings.hostname.c_str())) {
     Serial.println(F("Error setting up MDNS responder"));
   }
   // tell Wifi manager to call us during the setup.  Note that this "setSetupLoopCallback" is an addition
@@ -369,7 +372,7 @@ void loop() {
   // bme280
   unsigned long timeSince = millis() - lastBME;
   
-  if(settings.hasBME280 && timeSince > 2000) {
+  if(settings.hasBME280 && timeSince > 10000) {
     Serial.print("Temperature = ");  
     Serial.print(bme->readTemperature());  
     Serial.println(" *C");  
@@ -383,6 +386,14 @@ void loop() {
     Serial.println(" %");  
 
     lastBME = millis();
+
+    if (mqttClient && settings.mqttTopicBME.length() > 0) {
+      Serial.println("has valid mqtt topic, sending ...");
+      String payload = "{ \"idx\": 188, \"nvalue\": 0, \"svalue\": \"" + String(bme->readTemperature()) + ";" + String(bme->readHumidity()) + ";0;" + String(bme->readPressure()) + ";0\" }";
+      
+      Serial.println(payload);
+      mqttClient->publishBME(settings.mqttTopicBME.c_str(), payload.c_str());
+    }
   }
 }
 

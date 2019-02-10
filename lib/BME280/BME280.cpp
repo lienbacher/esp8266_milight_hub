@@ -32,7 +32,7 @@ float BME280::readTemperature() {
 }
 
 float BME280::readHumidity() {
-    return this->sensor->readTemperature();
+    return this->sensor->readHumidity();
 }
 
 float BME280::readPressure() {

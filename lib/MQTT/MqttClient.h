@@ -21,6 +21,7 @@ public:
   void reconnect();
   void sendUpdate(const MiLightRemoteConfig& remoteConfig, uint16_t deviceId, uint16_t groupId, const char* update);
   void sendState(const MiLightRemoteConfig& remoteConfig, uint16_t deviceId, uint16_t groupId, const char* update);
+  void publishBME(const char* topic, const char* payload);
 
 private:
   WiFiClient tcpClient;

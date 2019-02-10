@@ -113,6 +113,15 @@ void MqttClient::sendState(const MiLightRemoteConfig& remoteConfig, uint16_t dev
   publish(settings.mqttStateTopicPattern, remoteConfig, deviceId, groupId, update, true);
 }
 
+void MqttClient::publishBME(const char* topic, const char* payload) {
+  Serial.println("publishing bme");
+  if (connect()) {
+    mqttClient->publish(topic, payload, true);
+  } else {
+    Serial.println("connection failed");
+  }
+}
+
 void MqttClient::subscribe() {
   String topic = settings.mqttTopicPattern;
 

@@ -1,6 +1,7 @@
 
 #include <Wire.h>
 #include <Settings.h>
+#include <PubSubClient.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 
@@ -19,8 +20,11 @@ public:
     float readPressure();
 
 private:
-    Settings& settings;
     Adafruit_BME280 *sensor; // I2C 
+
+    Settings& settings;
+    PubSubClient* mqttClient;
+    
   
 };
 
