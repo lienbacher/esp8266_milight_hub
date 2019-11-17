@@ -123,6 +123,7 @@ public:
     sdaPin(4),
     sclPin(5),
     _autoRestartPeriod(0)
+  { }
 
   ~Settings() { }
 
