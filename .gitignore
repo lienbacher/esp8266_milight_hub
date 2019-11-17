@@ -15,3 +15,5 @@
 .vscode/launch.json
 /test/remote/settings.json
 /test/remote/espmh.env
+esp2_milight.code-workspace
+.DS_Store
